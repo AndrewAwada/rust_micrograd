@@ -1,0 +1,7 @@
+[package]
+name = "rust_micrograd"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+petgraph = "0.8.3"
