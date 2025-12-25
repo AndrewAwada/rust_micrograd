@@ -6,7 +6,7 @@ use std::iter::{zip, once};
 pub trait Module {
     fn zero_grad(&self) {
         self.parameters()
-            .for_each(|v| v.set_data(0.0));
+            .for_each(|v| v.set_grad(0.0));
     }
 
     fn parameters(&self) -> impl Iterator<Item = &Value>;
