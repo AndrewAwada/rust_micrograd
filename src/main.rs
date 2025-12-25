@@ -1,4 +1,5 @@
-use rust_micrograd::Value;
+use rust_micrograd::Arena;
+use rust_micrograd::ValueFactory;
 use std::process::Command;
 use std::fs;
 
@@ -6,31 +7,26 @@ const DOT_FILE: &str = "graph.dot";
 const DOT_PNG: &str = "graph.png";
 
 fn main() {
-    println!("Hello, world!");
+    let (_arena_life_time, arena_ref) = Arena::build();
+    let vf = ValueFactory::new(arena_ref);
+
     // inputs x1,x2
-    let x1 = Value::build(2.0);
-    let x2 = Value::build(0.0);
+    let x1 = vf.value(2.0);
+    let x2 = vf.value(0.0);
     // weights w1,w2
-    let w1 = Value::build(-3.0);
-    let w2 = Value::build(1.0);
+    let w1 = vf.value(-3.0);
+    let w2 = vf.value(1.0);
     // bias of the neuron
-    let b = Value::build(6.8813735870195432);
+    let b = vf.value(6.8813735870195432);
     // x1*w1 + x2*w2 + b
     let x1w1 = &x1*&w1;
     let x2w2 = &x2*&w2;
     let x1w1x2w2 = &x1w1 + &x2w2;
     let n = &x1w1x2w2 + &b;
     let o = n.tanh();
-    
+
     o.backward();
     let dot = o.draw_dot();
-
-    // Should panick but doesn't because shadowed variables don't have to drop till end of scope
-    // let a = Value::build(2.0);
-    // let b = Value::build(-3.0);
-    // let c = &a + &b;
-    // let a = &c + &b;
-    // let dot = a.draw_dot();
 
     write_dot(&dot, DOT_FILE).unwrap();
     render_dot(DOT_FILE, DOT_PNG).unwrap();
